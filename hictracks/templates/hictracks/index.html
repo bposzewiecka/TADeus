@@ -1,0 +1,21 @@
+{% extends 'hictracks/base_card.html' %}
+{% load render_table from django_tables2 %}
+
+{% block header %}
+
+Welcome to TADeus!
+
+{% endblock %}
+
+{% block body %}
+
+
+{% load socialaccount %}
+
+{% if user.is_authenticated %}
+<p>Welcome {{ user.username }} !!!</p>
+{% endif %}
+
+
+{% endblock %}
+
