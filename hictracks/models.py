@@ -5,6 +5,7 @@ from django.db.models import Q
 import matplotlib.pyplot as plt
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.html import format_html
+import hictracks.statistics as  statistics 
 
 class Species(models.Model):
     name = models.CharField(max_length = 50, unique = True)
@@ -148,11 +149,18 @@ class BedFileEntry(FileEntry):
     ensembl_gene_id = models.CharField(null=True, max_length = 20)
     biotype = models.CharField(max_length = 20)
 
+
+    def set_eval_pvalue(self):
+        enh_prom_file = TrackFile.objects.get(pk = 40)
+        n1 = len([ enh_prom.name.upper() for enh_prom in enh_prom_file.get_entries(self.chrom, self.start, self.start)])
+        n2 = len([ enh_prom.name.upper() for enh_prom in enh_prom_file.get_entries(self.chrom, self.end, self.end)])
+
+        self.score = statistics.get_eval_pvalue(max(n1,n2))
+
+
 class Gene(BedFileEntry):
     pass
     
-
-
 
 class Plot(models.Model):
     assembly = models.ForeignKey(Assembly, on_delete = models.PROTECT)

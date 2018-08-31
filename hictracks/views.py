@@ -601,6 +601,7 @@ def save_datasource(track_file, file_handle):
 
     if file_handle:
         for bed_entry in reader: 
+            bed_entry.set_eval_pvalue()
             bed_entry.save()
 
 
@@ -800,7 +801,7 @@ def show_eval(request, p_id):
 
     return render(request, 'hictracks/eval_show.html', {'p_id': p_id, 'tracks': tracks, 'file_entries' : file_entries} )
 
-
+    
 
 def add_entry_eval(request, p_id):
 
@@ -814,19 +815,23 @@ def add_entry_eval(request, p_id):
         if form.is_valid():
             bed_file_entry = form.save(commit = False)
             bed_file_entry.track_file  = eval.track_file
+
+            bed_file_entry.set_eval_pvalue()
             bed_file_entry.save()
             messages.success(request, "Breakpoint '{}' added to evaluation.".format(bed_file_entry.name))
 
             return redirect(edit_eval, p_id = eval.id)
 
         else:
-            print(form.errors)
             messages.error(request, 'Data was NOT successfully saved.')  
     else:
         form = EvalAddEntryForm()
 
 
     return render(request, 'hictracks/eval_add_entry.html', {'p_id': p_id, 'chroms': chroms , 'form': form} )
+
+
+
 
 
 def phenotypes(request, p_db):
